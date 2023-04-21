@@ -2,8 +2,8 @@ import io
 from PIL import Image
 import streamlit as st
 from image_effects import ImageEffects, ImageOps
-import time
-
+import imageio
+import base64
 
 def apply_glitch_effects(
     image,
@@ -160,7 +160,7 @@ if uploaded_file is not None:
     )
 
     apply_glitch = st.button("Apply Glitch Effects")
-    keep_glitching = st.button("Keep Glitching")
+    gif_glitch = st.button("Create GIF glitch")
 
     if apply_glitch:
         glitched_image = apply_glitch_effects(
@@ -196,12 +196,9 @@ if uploaded_file is not None:
             "image/png",
         )
     
-    if keep_glitching:
-        output_image = st.empty()
-        breakoff = st.button("Stop Glitching")
-        if breakoff:
-            st.stop()
-        while True:
+    if gif_glitch:
+        images_list = []
+        for _ in range(25):
             glitched_image = apply_glitch_effects(
                 input_image.copy(),
                 block_size,
@@ -224,7 +221,30 @@ if uploaded_file is not None:
                 color_intensity,
                 scale
             )
+            images_list.append(glitched_image)
+
+        # Save the images as a GIF using imageio
+        gif_buffer = io.BytesIO()
+        images_as_bytes = []
+        for image in images_list:
+            img_buffer = io.BytesIO()
+            imageio.imwrite(img_buffer, image, format="PNG")
+            images_as_bytes.append(img_buffer.getvalue())
         
-            output_image.image(glitched_image, caption="Glitched Image", use_column_width=True)
-        
-            time.sleep(0.005)
+        imageio.mimsave(gif_buffer, [imageio.imread(img_bytes) for img_bytes in images_as_bytes], format="GIF", duration=0.1)
+
+        # Reset buffer cursor to the beginning
+        gif_buffer.seek(0)
+
+        # Convert GIF bytes to base64 and display using HTML img tag
+        gif_base64 = base64.b64encode(gif_buffer.getvalue()).decode("utf-8")
+        st.markdown(f'<img src="data:image/gif;base64,{gif_base64}" alt="Glitched Image" style="max-width:100%;">', unsafe_allow_html=True)
+
+        # Offer the option to download the GIF
+        st.download_button(
+            "Download Glitched Image",
+            gif_buffer.getvalue(),
+            "glitched_image.gif",
+            "image/gif",
+        )
+
