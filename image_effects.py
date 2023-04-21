@@ -1,4 +1,4 @@
-from cv2 import cv2
+import cv2
 from PIL import Image, ImageDraw, ImageFilter, ImageOps, ImageChops
 import matplotlib.pyplot as plt
 import numpy as np
