@@ -1,5 +1,12 @@
 # Glitch Art Generator
 
+![Glitch Art Generator](/assets/Screenshot%202023-04-21%20at%2001.32.32.png)
+
+|  |  |
+|:-------------------------:|:-------------------------:|
+![Glitch Art Generator](/assets/download%20(1).gif)  |  ![Glitch Art Generator](/assets/download%20(4).gif) |
+![Glitch Art Generator](/assets/download%20(2).gif)  |  ![Glitch Art Generator](/assets/download%20(3).gif) |
+
 Glitch Art Generator is an interactive image manipulation tool that allows you to apply various glitch effects to your images using a user-friendly interface. The tool is built using Streamlit and the Python Image Library (PIL) to process images.
 
 ## Features
