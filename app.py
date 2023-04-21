@@ -1,7 +1,8 @@
 import io
 from PIL import Image
 import streamlit as st
-from image_effects import ImageEffects, ImageOps
+from image_effects import ImageEffects
+from PIL import Image, ImageOps
 import imageio
 import base64
 
