@@ -186,7 +186,6 @@ sympy==1.11.1
 ta==0.10.2
 TA-Lib==0.4.25
 tenacity==8.2.2
-tensorboardX @ file:///Users/joaomontenegro/jukebox/tensorboardX
 terminado==0.17.0
 tifffile==2023.4.12
 tinycss2==1.2.1
