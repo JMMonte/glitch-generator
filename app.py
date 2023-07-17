@@ -5,6 +5,68 @@ from image_effects import ImageEffects
 from PIL import Image, ImageOps
 import imageio
 import base64
+import random
+
+def randomize_parameters():
+    '''
+    Returns a dictionary with randomized parameters for the glitch effects.
+    '''
+    parameters = {}
+    parameters['block_size'] = random.randint(1, 100)
+    parameters['glitch_chance'] = random.uniform(0.0, 1.0)
+    parameters['color_scale'] = random.choice(
+        [
+            "none",
+            "grayscale",
+            "sepia",
+            "magma",
+            "inferno",
+            "plasma",
+            "viridis",
+            "cividis",
+            "rocket",
+            "mako",
+            "turbo",
+        ]
+    )
+    parameters['overlay'] = random.choice(["none", "vignette", "light_leak"])
+    parameters['effects_order'] = random.sample(
+        [
+            "pixelate",
+            "horizontal_glitch",
+            "vertical_glitch",
+            "color_scale",
+            "overlay",
+            "reduce_colors",
+            "kaleidoscope",
+            "noise",
+            "edges",
+            "posterize",
+            "unsharp_mask",
+            "erosion",
+            "barrel_distortion",
+            "vintage_effect",
+            "halftone",
+        ],
+        k=random.randint(1, 15),
+    )
+    parameters['num_colors'] = random.randint(1, 100)
+    parameters['kaleidoscope_slices'] = random.randint(2, 20)
+    parameters['kaleidoscope_angle'] = random.randint(0, 360)
+    parameters['kaleidoscope_slice_angle'] = random.randint(0, 360)
+    parameters['grain_size'] = random.randint(1, 100)
+    parameters['noise_type'] = random.choice(["grain", "speckle","gaussian", "s&p", "poisson"])
+    parameters['sigma'] = random.uniform(0.0, 10.0)
+    parameters['levels'] = random.randint(1, 10)
+    parameters['selem_shape'] = random.choice(["disk", "square", "cube"])
+    parameters['selem_size'] = random.randint(1, 20)
+    parameters['k'] = random.uniform(0.0, 10.0)
+    parameters['vignette_intensity'] = random.uniform(0.0, 10.0)
+    parameters['color_intensity'] = random.uniform(0.0, 10.0)
+    parameters['scale'] = random.randint(1, 100)
+
+    return parameters
+
 
 def apply_glitch_effects(
     image,
@@ -77,10 +139,11 @@ def apply_glitch_effects(
 
 st.title("Glitch Art Generator")
 
-uploaded_file = st.file_uploader("Choose an image file", type=["png", "jpg", "jpeg"])
+uploaded_file = st.file_uploader("Choose an image file", type=["png", "jpg", "jpeg", "webp"])
 
 if uploaded_file is not None:
     input_image = Image.open(uploaded_file).convert("RGB")
+    st.write(f"Image mode: {input_image.mode}") 
     image_effects = ImageEffects(input_image)
     st.image(input_image, caption="Input Image", use_column_width=True)
 
@@ -159,9 +222,67 @@ if uploaded_file is not None:
         ],
         default=["pixelate", "horizontal_glitch"],
     )
-
+    randomize = st.button("Randomize Effects")
     apply_glitch = st.button("Apply Glitch Effects")
     gif_glitch = st.button("Create GIF glitch")
+
+    if randomize:
+        randomized_parameters = randomize_parameters()
+        
+        block_size = randomized_parameters['block_size']
+        glitch_chance = randomized_parameters['glitch_chance']
+        color_scale = randomized_parameters['color_scale']
+        overlay = randomized_parameters['overlay']
+        effects_order = randomized_parameters['effects_order']
+        num_colors = randomized_parameters['num_colors']
+        kaleidoscope_slices = randomized_parameters['kaleidoscope_slices']
+        kaleidoscope_angle = randomized_parameters['kaleidoscope_angle']
+        kaleidoscope_slice_angle = randomized_parameters['kaleidoscope_slice_angle']
+        grain_size = randomized_parameters['grain_size']
+        noise_type = randomized_parameters['noise_type']
+        sigma = randomized_parameters['sigma']
+        levels = randomized_parameters['levels']
+        selem_shape = randomized_parameters['selem_shape']
+        selem_size = randomized_parameters['selem_size']
+        k = randomized_parameters['k']
+        vignette_intensity = randomized_parameters['vignette_intensity']
+        color_intensity = randomized_parameters['color_intensity']
+        scale = randomized_parameters['scale']
+        
+        glitched_image = apply_glitch_effects(
+            input_image.copy(),
+            block_size,
+            glitch_chance,
+            color_scale,
+            overlay,
+            effects_order,
+            num_colors,
+            kaleidoscope_slices,
+            kaleidoscope_angle,
+            kaleidoscope_slice_angle,
+            grain_size,
+            noise_type,
+            sigma,
+            levels,
+            selem_shape,
+            selem_size,
+            k,
+            vignette_intensity,
+            color_intensity,
+            scale
+        )
+        
+        st.image(glitched_image, caption="Randomly Glitched Image", use_column_width=True)
+
+        buffer = io.BytesIO()
+        glitched_image.save(buffer, format="PNG")
+        st.download_button(
+            "Download Randomly Glitched Image",
+            buffer.getvalue(),
+            "randomly_glitched_image.png",
+            "image/png",
+        )
+        
 
     if apply_glitch:
         glitched_image = apply_glitch_effects(

@@ -169,8 +169,9 @@ class ImageEffects:
         - noise_type: The type of noise to add.
         '''
         width, height = image.size
+        image_mode = image.mode
         if noise_type == "grain":
-            grain = Image.new("RGB", (width, height), (0, 0, 0))
+            grain = Image.new(image_mode, (width, height), (0, 0, 0))
             draw = ImageDraw.Draw(grain)
             for _ in range(width * height * grain_size // 100):
                 x = random.randint(0, width)
@@ -178,7 +179,7 @@ class ImageEffects:
                 draw.point((x, y), fill=(255, 255, 255))
             image = ImageChops.add(image, grain)
         elif noise_type == "speckle":
-            speckle = Image.new("RGB", (width, height), (0, 0, 0))
+            speckle = Image.new(image_mode, (width, height), (0, 0, 0))
             draw = ImageDraw.Draw(speckle)
             for _ in range(width * height * grain_size // 100):
                 x = random.randint(0, width)
